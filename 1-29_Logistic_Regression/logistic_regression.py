@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 # Load the data
-dataSet = pd.read_csv('/Users/tm033520/Documents/4830/dataset.csv')
+dataSet = pd.read_csv('/Users/tm033520/Documents/4830/Machine-Learning/dataset.csv')
 
 
 # Save the first column (Patient ID) for later
