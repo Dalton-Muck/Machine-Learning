@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split  # For splitting the datase
 from sklearn.linear_model import LogisticRegression  # For logistic regression model
 from sklearn.neighbors import KNeighborsClassifier  # For k-NN model
 from sklearn.metrics import accuracy_score  # For evaluating model performance
-from sklearn.model_selection import GridSearchCV, cross_val_score  # For hyperparameter tuning and cross-validation
+from sklearn.model_selection import GridSearchCV  # For hyperparameter tuning and cross-validation
 from sklearn.feature_selection import SelectKBest, f_classif  # For selecting the most relevant features
 
 # Load the data
@@ -45,6 +45,8 @@ y = dataSet['Names']  # Target variable
 # Select the k best features
 features = 10  # Adjust k based on the desired number of features
 selector = SelectKBest(f_classif, k = features)  # Initialize SelectKBest with ANOVA F-value
+# ANOVA F-value measures the linear dependency between the feature and the target variable
+# https://datascience.stackexchange.com/questions/74465/how-to-understand-anova-f-for-feature-selection-in-python-sklearn-selectkbest-w 
 X = selector.fit_transform(X, y)  # Reduce dataset to top-k features
 
 # Split data into training and testing sets
@@ -72,14 +74,17 @@ param_grid = {
     'metric': ['euclidean', 'manhattan']  # Distance metrics for k-NN
 }
 
+
 # Perform GridSearchCV to find the best hyperparameters
-grid_search = GridSearchCV(KNeighborsClassifier(), param_grid, cv=5, scoring='accuracy')  # Initialize grid search for k-NN
+# https://dev.to/anurag629/gridsearchcv-in-scikit-learn-a-comprehensive-guide-2a72#:~:text=GridSearchCV%20works%20by%20defining%20a,combination%20is%20called%20cross%2Dvalidation 
+grid_search = GridSearchCV(KNeighborsClassifier(), param_grid, cv=8, scoring='accuracy')  # Initialize grid search for k-NN
 grid_search.fit(X_train, y_train)  # Fit grid search on training data
 
 # Get the best parameters and evaluate on test set
 best_knn = grid_search.best_estimator_  # Retrieve the best k-NN model
+
 y_pred_knn = best_knn.predict(X_test)  # Predict using the best k-NN model
 accuracy_knn = accuracy_score(y_test, y_pred_knn)  # Compute accuracy of k-NN model
 
-#print("Best Parameters for k-NN:", grid_search.best_params_)  # Print best hyperparameters for k-NN
+print("Best Parameters for k-NN:", grid_search.best_params_)  # Print best hyperparameters for k-NN
 print("k-NN Accuracy: ", accuracy_knn)  # Print k-NN accuracy with best parameters
