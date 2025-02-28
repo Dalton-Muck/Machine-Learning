@@ -59,9 +59,11 @@ svm = SVC()
 
 # Implement Grid Search
 param_grid = {
-    'C': [0.1, 1, 10],
-    'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
-    'gamma': ['scale', 'auto']
+    'C': [0.1, 1, 10, 100],
+    'kernel': ['poly', 'sigmoid'],
+    'degree': [2, 3, 4],  # Only for 'poly' kernel
+    'gamma': ['scale', 'auto', 0.001, 0.01, 0.1, 1],  # Applicable for both 'poly' and 'sigmoid' kernels
+    'coef0': [0.0, 0.1, 0.5, 1.0]  # Applicable for both 'poly' and 'sigmoid' kernels
 }
 grid_search = GridSearchCV(svm, param_grid, cv=3, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
