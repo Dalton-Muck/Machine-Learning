@@ -5,11 +5,10 @@ from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import resample
 
-# load genesset
 print('loading genes...')
 genes = pd.read_csv('../dataset.csv')
 print('loading mutations...')
-mutations: pd.DataFrame = pd.read_csv('../mutations.csv')
+mutations = pd.read_csv('../mutations.csv')
 
 # encode targets
 print('encoding gene targets...')
@@ -61,4 +60,4 @@ print('number of mutations after: ', mutations_filtered.shape[1])
 
 print('saving mutations to csv...')
 mutations_filtered.index = mutations['targets']
-mutations_filtered.to_csv('filtered_mutations.csv', index=True)
+mutations_filtered.to_csv('../filtered_mutations.csv', index=True)
