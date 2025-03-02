@@ -9,15 +9,35 @@ from sklearn.utils import resample
 print('loading genes...')
 genes = pd.read_csv('../dataset.csv')
 print('loading mutations...')
-mutations = np.genfromtxt(
+mutations_targets = np.genfromtxt(
+    '../mutations.csv',
+    delimiter=',',
+    names=True,
+    dtype=None,
+    usecols=[0]
+)
+max_features = np.genfromtxt(
+    '../mutations.csv',
+    delimiter=',',
+    max_rows=1,
+).shape[0]
+mutations_features = np.genfromtxt(
     '../mutations.csv',
     delimiter=',',
     dtype=None,
     names=True,
-    encoding='utf-8'
+    usecols=range(1, max_features)
 )
-mutations = pd.DataFrame(mutations, columns=mutations.dtype.names)
-mutations.index = mutations['targets']
+print(mutations_features)
+mutations = pd.DataFrame(
+    mutations_features,
+    columns=mutations_features.dtype.names
+)
+mutations_targets = pd.DataFrame(
+    mutations_targets,
+    columns=mutations_targets.dtype.names
+)
+mutations = pd.concat([mutations_targets, mutations], axis=1)
 
 # encode targets
 print('encoding gene targets...')
@@ -60,7 +80,7 @@ mask = selector.get_support()
 genes_features = features.columns[mask].tolist()
 
 print('filtering mutations based off genes...')
-print('number of mutations before: ', mutations.shape[1])
+print('number of mutations before: ', mutations.shape[1] - 1)
 # Filter mutations to keep only the columns that match the selected gene features
 pattern = '|'.join(genes_features)
 mutations_filtered = mutations.loc[:, (mutations.columns.str.contains(
