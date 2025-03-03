@@ -7,21 +7,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 
 # Load the data
-dataSet = pd.read_csv('/Users/tm033520/Documents/4830/Machine-Learning/dataset.csv')  # Load dataset from CSV file
-
+dataSet = pd.read_csv('/Users/tm033520/Documents/4830/Machine-Learning/genes_f_classif_300.csv')  # Load dataset from CSV file
 # Split into features (X) and target variable (y)
-X = dataSet.drop(columns=['Names'])  # Separate features from the target variable
-y = dataSet['Names']  # Target variable
-
-# Feature Selection
-# Select the top k features
-k = 10000 # Number of top features to select
-# mutual_info_classif https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html 
-selector = SelectKBest(score_func=mutual_info_classif, k=k)  # Initialize SelectKBest with mutual information
-X = selector.fit_transform(X, y)  # Select top k features
-# Binarize the data
-binarizer = Binarizer()
-X = binarizer.fit_transform(X)
+X = dataSet.drop(columns = ['targets'])  # Separate features from the target variable
+y = dataSet['targets']  # Target variable
 
 # Support Vector Machine
 # Split the data into training and testing sets
@@ -32,9 +21,9 @@ svm = SVC()
 
 # Implement Grid Search
 param_grid = {
-    'C': [0.1, 1, 10],
-    'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
-    'gamma': ['scale', 'auto']
+    'C': [10],
+    'kernel': ['sigmoid'],
+    'gamma': ['auto']
 }
 grid_search = GridSearchCV(svm, param_grid, cv=3, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
