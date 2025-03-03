@@ -5,10 +5,10 @@ Individual Tasks
 
 Colin: reading in new data file, feature selection
 
-Carson: Paramter selection
+Carson: Paramter selection (Kernels: rbf and Linear)
 
 Brock: Prediction Outputs and Confusion Matrix
 
-Dalton: Parameter selection
+Dalton: Parameter selection (Kernels: Polynomial and Sigmoid)
 
 Evan: Optimizing grid search process
