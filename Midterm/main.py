@@ -7,24 +7,36 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 
 # Load the data
-dataSet = pd.read_csv('/Users/tm033520/Documents/4830/Machine-Learning/genes_f_classif_300.csv')  # Load dataset from CSV file
-# Split into features (X) and target variable (y)
-X = dataSet.drop(columns = ['targets'])  # Separate features from the target variable
-y = dataSet['targets']  # Target variable
+dataSet = pd.read_csv('../genes_mutual_info_classif_300.csv')  # Load dataset from CSV file
 
-# Support Vector Machine
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=35)
+# Separate features from the target variable
+X = dataSet.drop(columns=['targets'])
+y = dataSet['targets']
+
+# #Select the 300 best features
+# selector = SelectKBest(mutual_info_classif, k=3000)
+# X_selected = selector.fit_transform(X, y)
+
+# Binazier
+# binarizer = Binarizer()
+# X_selected = binarizer.fit_transform(X)
+
+# Split into training and testing sets using the selected features
+X_train, X_test, y_train, y_test = train_test_split(X_selected, y, test_size=0.2, random_state=35)
 
 # Initialize the SVM model
 svm = SVC()
 
 # Implement Grid Search
-param_grid = {
-    'C': [10],
-    'kernel': ['sigmoid'],
-    'gamma': ['auto']
-}
+# param_grid = {
+#     'C': [.05, 0.1, 1],
+#     'kernel': ['poly'],
+#     'gamma': ['auto', .05, 0.1, 0.01],
+#     # only for poly
+#     'degree': ['auto', 2, 3, 4],
+#     'coef0': [2.0, 3.0, 4.0],
+#     'tol': [ 0.0001]
+# }
 grid_search = GridSearchCV(svm, param_grid, cv=3, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
 
