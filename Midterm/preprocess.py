@@ -84,8 +84,10 @@ for func in classif_functions:
     print('number of mutations before: ', mutations.shape[1] - 1)
     # Filter mutations to keep only the columns that match the selected gene features
     pattern = '|'.join(filtered_genes)
-    mutations_filtered = mutations.loc[:, (mutations.columns.str.contains(
-        pattern) & mutations.nunique() > 1)]
+    mutations_filtered = mutations.loc[:,
+                                       mutations.columns.str.contains(pattern)]
+    mutations_filtered = mutations_filtered.loc[:,
+                                                mutations_filtered.nunique() > 1]
     print('number of mutations after: ', mutations_filtered.shape[1])
 
     print('saving mutations to csv...')
