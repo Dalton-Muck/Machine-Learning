@@ -37,6 +37,14 @@ svm = SVC()
 #     'coef0': [2.0, 3.0, 4.0],
 #     'tol': [ 0.0001]
 # }
+
+# param_grid = {
+#     'C': [.1, 1],
+#     'kernel': ['sigmoid'],
+#     'gamma': ['scale', 'auto', .001, .01, .1],
+#     'coef0': [0.0, 1.0],
+#     'tol': [0.0001]
+# }
 grid_search = GridSearchCV(svm, param_grid, cv=3, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
 
