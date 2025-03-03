@@ -7,7 +7,7 @@ Colin: reading in new data file, feature selection
 
 Carson: Paramter selection
 
-Brock: Paramreter selection
+Brock: Prediction Outputs and Confusion Matrix
 
 Dalton: Parameter selection
 
