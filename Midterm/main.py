@@ -9,6 +9,9 @@ import matplotlib.pyplot as pltjo
 from sklearn.metrics import confusion_matrix
 import plotly.graph_objects as go
 import plotly.offline as pyo
+import joblib
+import time
+import itertools
 
 # Load the data
 dataSet = pd.read_csv('../mutations/mutations_chi2_300.csv')  # Load dataset from CSV file
@@ -49,23 +52,69 @@ svm = SVC()
 #     'tol': [0.0001]
 # }
 
-RBF_param_grid = {
-    'C': [.01, .1, 1],
-    'kernel': ['rbf'],
-    'tol' : [0.0001],
-    'gamma' : ['scale', 'auto'],
-    'cache_size' : [500],
-    'decision_function_shape' : ['ovo', 'ovr']
-}
+# RBF_param_grid = {
+#     'C': [.01, .1, 1],
+#     'kernel': ['rbf'],
+#     'tol' : [0.0001],
+#     'gamma' : ['scale', 'auto'],
+#     'cache_size' : [500],
+#     'decision_function_shape' : ['ovo', 'ovr']
+# }
 
-Linear_param_grid = {
-    'C': [.01, .1, 1, 10],
-    'kernel': ['linear'],
-    'tol' : [0.0001],
-}
+# Linear_param_grid = {
+#     'C': [.01, .1, 1, 10],
+#     'kernel': ['linear'],
+#     'tol' : [0.0001],
+# }
 
-grid_search = GridSearchCV(svm, RBF_param_grid, cv=3, scoring='accuracy', n_jobs= -1)
+param_grid = [
+    {
+        'C': [.05, 0.1, 1],
+        'kernel': ['poly'],
+        'gamma': ['auto', .05, 0.1, 0.01],
+        'degree': [2, 3, 4],  # Removed 'auto' since 'degree' requires an integer
+        'coef0': [2.0, 3.0, 4.0],
+        'tol': [0.0001]
+    },
+    {
+        'C': [.1, 1],
+        'kernel': ['sigmoid'],
+        'gamma': ['scale', 'auto', .001, .01, .1],
+        'coef0': [0.0, 1.0],
+        'tol': [0.0001]
+    },
+    {
+        'C': [.01, .1, 1],
+        'kernel': ['rbf'],
+        'tol': [0.0001],
+        'gamma': ['scale', 'auto'],
+        'cache_size': [500],
+        'decision_function_shape': ['ovo', 'ovr']
+    },
+    {
+        'C': [.01, .1, 1, 10],
+        'kernel': ['linear'],
+        'tol': [0.0001]
+    }
+]
+
+# Compute total parameter combinations
+cv_folds = 3
+num_combinations = sum(len(list(itertools.product(*grid.values()))) for grid in param_grid)
+total_iterations = num_combinations * cv_folds
+print(f"Total parameter combinations: {num_combinations}")
+print(f"Cross-validation folds: {cv_folds}")
+print(f"Total iterations (param_combinations * cv): {total_iterations}")
+
+# Run timed grid search
+start_time = time.time()
+print('Running Grid Search')
+grid_search = GridSearchCV(svm, param_grid, cv=cv_folds, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"Grid search took {elapsed_time:.2f} seconds")
 
 print(KVAL)
 # Best parameters from grid search
