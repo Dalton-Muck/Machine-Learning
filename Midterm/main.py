@@ -3,8 +3,12 @@ from sklearn.preprocessing import MinMaxScaler, LabelEncoder, Binarizer
 import re
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
+import matplotlib.pyplot as pltjo
+from sklearn.metrics import confusion_matrix
+import plotly.graph_objects as go
+import plotly.offline as pyo
 
 # Load the data
 dataSet = pd.read_csv('../mutations/mutations_chi2_300.csv')  # Load dataset from CSV file
@@ -78,3 +82,56 @@ y_pred = best_svm.predict(X_test)
 # Evaluate the model
 accuracy = accuracy_score(y_test, y_pred)
 print(f'Accuracy: {accuracy * 100:.2f}%')
+
+#Make a classification report to use to output the data
+print("Classification Report: ")
+print(classification_report(y_test, y_pred, target_names= ['brca', 'prad', 'luad']))
+report = classification_report(y_test, y_pred, target_names= ['brca', 'prad', 'luad'], output_dict=True)
+
+#Create a figure for the radar chart
+plot = go.Figure()
+
+brcaData = [report['brca']['precision'], report['brca']['recall'], report['brca']['f1-score']]
+pradData = [report['prad']['precision'], report['prad']['recall'], report['prad']['f1-score']]
+luadData = [report['luad']['precision'], report['luad']['recall'], report['luad']['f1-score']]
+
+#Add a radar graph of brca
+plot.add_trace(go.Scatterpolar(
+    r = brcaData,
+    theta = ['precision', 'recall', 'f1-score'],
+    fill = 'toself',
+    name = 'brca'
+))
+
+#Add a radar graph of prad
+plot.add_trace(go.Scatterpolar(
+    r = pradData,
+    theta = ['precision', 'recall', 'f1-score'],
+    fill = 'toself',
+    name = 'prad'
+))
+
+#Add a radar graph of luad
+plot.add_trace(go.Scatterpolar(
+    r = luadData,
+    theta = ['precision', 'recall', 'f1-score'],
+    fill = 'toself',
+    name = 'luad'
+))
+
+#Update the figure to have an appropriate format
+plot.update_layout(
+    polar = dict(
+        radialaxis = dict(
+            visible = True,
+            range= [0, 1]
+        )),
+    showlegend = True
+)
+
+#Show the radar graph
+plot.show()
+
+
+print("Confusion Matrix: ")
+print(confusion_matrix(y_test, y_pred))
