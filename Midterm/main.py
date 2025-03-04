@@ -7,22 +7,21 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 
 # Load the data
-dataSet = pd.read_csv('../genes_mutual_info_classif_300.csv')  # Load dataset from CSV file
+dataSet = pd.read_csv('../mutations/mutations_chi2_300.csv')  # Load dataset from CSV file
+#dataSet = pd.read_csv('../genes_f_classif_300.csv')  # Load dataset from CSV file
 
-# Separate features from the target variable
-X = dataSet.drop(columns=['targets'])
-y = dataSet['targets']
 
-# #Select the 300 best features
-# selector = SelectKBest(mutual_info_classif, k=3000)
-# X_selected = selector.fit_transform(X, y)
+# Select the best features
 
-# Binazier
-# binarizer = Binarizer()
-# X_selected = binarizer.fit_transform(X)
+# Split into features (X) and target variable (y)
+X = dataSet.drop(columns = ['targets'])  # Separate features from the target variable
+y = dataSet['targets']  # Target variable
+KVAL = 3000
+featureSelection = SelectKBest(k=KVAL).fit_transform(X, y)
 
-# Split into training and testing sets using the selected features
-X_train, X_test, y_train, y_test = train_test_split(X_selected, y, test_size=0.2, random_state=35)
+# Support Vector Machine
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(featureSelection, y, test_size=0.2)
 
 # Initialize the SVM model
 svm = SVC()
@@ -45,12 +44,30 @@ svm = SVC()
 #     'coef0': [0.0, 1.0],
 #     'tol': [0.0001]
 # }
-grid_search = GridSearchCV(svm, param_grid, cv=3, scoring='accuracy', n_jobs= -1)
+
+RBF_param_grid = {
+    'C': [.01, .1, 1],
+    'kernel': ['rbf'],
+    'tol' : [0.0001],
+    'gamma' : ['scale', 'auto'],
+    'cache_size' : [500],
+    'decision_function_shape' : ['ovo', 'ovr']
+}
+
+Linear_param_grid = {
+    'C': [.01, .1, 1, 10],
+    'kernel': ['linear'],
+    'tol' : [0.0001],
+}
+
+grid_search = GridSearchCV(svm, RBF_param_grid, cv=3, scoring='accuracy', n_jobs= -1)
 grid_search.fit(X_train, y_train)
 
+print(KVAL)
 # Best parameters from grid search
 best_params = grid_search.best_params_
 print(f'Best parameters: {best_params}')
+
 
 # Train the SVM model with best parameters
 best_svm = grid_search.best_estimator_
