@@ -24,6 +24,11 @@ csv_files = [
     './data/mutations_f_regression_300.csv',
     './data/mutations_mutual_info_classif_300.csv',
     './data/mutations_mutual_info_regression_300.csv',
+    './data/genes_chi2_300.csv',
+    './data/genes_f_classif_300.csv',
+    './data/genes_f_regression_300.csv',
+    './data/genes_mutual_info_classif_300.csv',
+    './data/genes_mutual_info_regression_300.csv',
 ]
 
 best_model = None
@@ -80,9 +85,18 @@ for csv_file in csv_files:
     # Split into features (X) and target variable (y)
     X = dataSet.drop(columns=['targets'])
     y = dataSet['targets']
-    KVAL = 3000
-    featureSelection = SelectKBest(k=KVAL).fit_transform(X, y)
-
+    
+    if 'mutations' in csv_file:  # Assuming 'mutations' is part of the filename for mutation files
+        KVAL = 3000
+        featureSelection = SelectKBest(k=KVAL).fit_transform(X, y)
+        print(f"Selected top {KVAL} features for mutations.")
+    elif 'genes' in csv_file:  # Assuming 'genes' is part of the filename for gene files
+        featureSelection = Binarizer().fit_transform(X)
+        print("Binarized features for genes.")
+    else:
+        print("Unknown file type, skipping...")
+        continue 
+        
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(featureSelection, y, test_size=0.2)
 
