@@ -34,38 +34,6 @@ X_train, X_test, y_train, y_test = train_test_split(featureSelection, y, test_si
 svm = SVC()
 
 # Implement Grid Search
-# param_grid = {
-#     'C': [.05, 0.1, 1],
-#     'kernel': ['poly'],
-#     'gamma': ['auto', .05, 0.1, 0.01],
-#     # only for poly
-#     'degree': ['auto', 2, 3, 4],
-#     'coef0': [2.0, 3.0, 4.0],
-#     'tol': [ 0.0001]
-# }
-
-# param_grid = {
-#     'C': [.1, 1],
-#     'kernel': ['sigmoid'],
-#     'gamma': ['scale', 'auto', .001, .01, .1],
-#     'coef0': [0.0, 1.0],
-#     'tol': [0.0001]
-# }
-
-# RBF_param_grid = {
-#     'C': [.01, .1, 1],
-#     'kernel': ['rbf'],
-#     'tol' : [0.0001],
-#     'gamma' : ['scale', 'auto'],
-#     'cache_size' : [500],
-#     'decision_function_shape' : ['ovo', 'ovr']
-# }
-
-# Linear_param_grid = {
-#     'C': [.01, .1, 1, 10],
-#     'kernel': ['linear'],
-#     'tol' : [0.0001],
-# }
 
 param_grid = [
     {
