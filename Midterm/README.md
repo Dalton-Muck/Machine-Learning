@@ -47,6 +47,9 @@ By integrating Dask into the grid search, this project effectively optimizes the
 ![terminal_output](./imgs/main_distributed_output3.png)
 ![terminal_output](./imgs/main_distributed_output4.png)
 
+### Output Graph
+![graph](./imgs/main_distributed_graph.png)
+
 ## Steps to Run the Project
 **NOTE**: You will have to configure an SSH keypair on each lab machine and change the SSH username in `\distributed_setup\start_dask_cluster.bat`
 ### 1. Navigate to the project folder:
